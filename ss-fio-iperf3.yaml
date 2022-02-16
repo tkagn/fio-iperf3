@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: fio-iperf3
+  namespace: perftesting
+spec:
+  selector:
+    matchLabels:
+      app: fio-iperf3
+  serviceName: fio-iperf3
+  replicas: 0
+  template:
+    metadata:
+      labels:
+        app: fio-iperf3
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/worker
+                    operator: Exists
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - fio-iperf3
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - name: fio-iperf3
+        image: >-
+          image-registry.openshift-image-registry.svc:5000/perftesting/fio-iperf3@sha256:3ff71fdfe885765f10ac71df9d4895cadb97e23807ea036951d8bc6018be741b
+        command:
+          - sh
+          - '-c'
+          - tail -f /dev/null
+        ports:
+        - containerPort: 5000
+          name: iperf3-port
+        volumeMounts:
+        - name: perftest-rbd
+          mountPath: /mnt/rbd
+        - name: perftest-cephfs
+          mountPath: /mnt/cephfs
+  volumeClaimTemplates:
+  - metadata:
+      name: perftest-rbd
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 3Gi
+      storageClassName: ocs-storagecluster-ceph-rbd
+  - metadata:
+      name: perftest-cephfs
+    spec:
+      accessModes: [ "ReadWriteMany" ]
+      resources:
+        requests:
+          storage: 3Gi
+      storageClassName: ocs-storagecluster-cephfs
+
