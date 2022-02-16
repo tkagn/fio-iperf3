@@ -12,14 +12,11 @@ The pod will request an 3GiB RBD PVC and a 3GiB CephFS PVC. The PVCs will be mou
 
 **FIO Throughput Test**
 ```bash
-# 
-sync ; fio --name=throughput-test --filename=/mnt/rbd/throughput-test.fio --ioengine=libaio --direct=1 --rw=write --bs=64k --size=1Gi --iodepth=64 --numjobs=1 --group_reporting --runtime=120 --time_based
-
 # Sequential write throughput (write bandwidth) (1024 KB for single I/O):
-sync ; fio --name=throughput-test --filename=/mnt/rbd/throughput-test.fio --ioengine=libaio --direct=1 --rw=write --bs=1024k --size=1Gi --iodepth=64 --numjobs=1 --group_reporting --runtime=120 --time_based
+sync ; fio --name=writethroughput-test --filename=/mnt/rbd/throughput-test.fio --ioengine=libaio --direct=1 --rw=write --bs=1024k --size=1Gi --iodepth=64 --numjobs=1 --group_reporting --runtime=120 --time_based
 
 # Sequential read throughput (read bandwidth) (1024 KB for single I/O):
-sync ; fio --name=throughput-test --filename=/mnt/rbd/throughput-test.fio --ioengine=libaio --direct=1 --rw=read --bs=1024k --size=1Gi --iodepth=64 --numjobs=1 --group_reporting --runtime=120 --time_based
+sync ; fio --name=readthroughput-test --filename=/mnt/rbd/throughput-test.fio --ioengine=libaio --direct=1 --rw=read --bs=1024k --size=1Gi --iodepth=64 --numjobs=1 --group_reporting --runtime=120 --time_based
 ```
 
 **FIO IOPS Test**
